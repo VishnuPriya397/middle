@@ -26,7 +26,7 @@ public class UserController {
 	
 	@RequestMapping(value="/registeruser",method=RequestMethod.POST)
 	public ResponseEntity<?> registerUser(@RequestBody User user){
-		System.out.println(user.toString());
+		System.out.println("registerUser in UserController"+user);
 		if(!userDAO.isEmailUnique(user.getEmail())){
 			ErrorClass error=new ErrorClass(1,"Email already exists please type a new one");
 		return new ResponseEntity<ErrorClass>(error,HttpStatus.CONFLICT);
@@ -40,7 +40,7 @@ public class UserController {
 			return new ResponseEntity<User>(user,HttpStatus.OK);
 	}
 	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public ResponseEntity<?> login(@RequestBody User user, HttpSession session){
+	public ResponseEntity<?> login(@RequestBody User user,HttpSession session){
 		System.out.println(user);
 		User validUser=userDAO.login(user);
 		System.out.println(validUser);
@@ -49,24 +49,57 @@ public class UserController {
 		return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
 		}
 		else{
-             validUser.setOnline(true);
-             userDAO.update(validUser);
-             session.setAttribute("loginId", user.getEmail());
-		return new ResponseEntity<User>(validUser,HttpStatus.OK);
-		}
+			validUser.setOnline(true);
+			userDAO.update(validUser);
+			session.setAttribute("loginId",user.getEmail());
+			return new ResponseEntity<User>(validUser,HttpStatus.OK);
 	}
-	
+	}
 	@RequestMapping(value="/logout",method=RequestMethod.PUT)
-	public ResponseEntity<?> logout(HttpSession session){	
-		String email=(String) session.getAttribute("loginId");
+	public ResponseEntity<?> logout(HttpSession session){
+		String email=(String)session.getAttribute("loginId");
 		if(email==null){
-			ErrorClass error=new ErrorClass(4,"Please Login");
+			ErrorClass error=new ErrorClass(4,"please login....");
 			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
 		}
-		User user= userDAO.getUser(email);
+		User user=userDAO.getUser(email);
 		user.setOnline(false);
 		userDAO.update(user);
+		session.removeAttribute("loginId");
 		session.invalidate();
 		return new ResponseEntity<User>(user,HttpStatus.OK);
-	   }
+		
 	}
+	@RequestMapping(value="/getuser",method=RequestMethod.GET)
+	public ResponseEntity<?> getUser(HttpSession session){
+		String email=(String)session.getAttribute("loginId");
+		if(email==null){
+			ErrorClass error=new ErrorClass(5,"unauthorized access....");
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+		}
+		User user=userDAO.getUser(email);
+		return new ResponseEntity<User>(user,HttpStatus.OK);
+
+	}
+	@RequestMapping(value="/updateuser",method=RequestMethod.PUT)
+	public ResponseEntity<?> updateUser(@RequestBody User user,HttpSession session){
+		String email=(String)session.getAttribute("loginId");
+		if(email==null){
+			ErrorClass error=new ErrorClass(5,"unauthorized access....");
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+		}
+		try{
+			userDAO.update(user);
+			return new ResponseEntity<User>(user,HttpStatus.OK);
+		}
+		catch(Exception e){
+			ErrorClass error=new ErrorClass(5,"Unable to update user detailes..."+e.getMessage());
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+
+	}
+
+		
+	}
+	}	
+
+	
