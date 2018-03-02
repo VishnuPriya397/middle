@@ -17,16 +17,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.Niit.Dao.JobDAO;
 import com.Niit.Dao.UserDAO;
 import com.Niit.model.ErrorClass;
-import com.Niit.model.User;
 import com.Niit.model.Job;
+import com.Niit.model.User;
 
 @Controller
 public class JobController {
-
+	
 	@Autowired
 	private UserDAO userDAO;
+	
 	@Autowired
 	private JobDAO jobDAO;
+	
+	public JobController(){
+		System.out.println("JobController");
+	}
 	
 	@RequestMapping(value="/addjob",method=RequestMethod.POST)
 	public ResponseEntity<?> addJob(@RequestBody Job job,HttpSession session)
@@ -74,6 +79,5 @@ public class JobController {
 		}
 		Job job=jobDAO.getJob(id);
 		return new ResponseEntity<Job>(job,HttpStatus.OK);
-}
-	
+    }
 }

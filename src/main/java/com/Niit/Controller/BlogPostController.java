@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,5 +85,4 @@ public class BlogPostController {
 		BlogPost blogPost=blogPostDAO.getBlog(id);
 		return new ResponseEntity<BlogPost>(blogPost,HttpStatus.OK);
 	}
-
 }
