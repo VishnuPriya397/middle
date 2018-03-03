@@ -85,4 +85,5 @@ public class BlogPostController {
 		BlogPost blogPost=blogPostDAO.getBlog(id);
 		return new ResponseEntity<BlogPost>(blogPost,HttpStatus.OK);
 	}
+
 }
