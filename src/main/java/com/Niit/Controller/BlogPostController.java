@@ -86,4 +86,35 @@ public class BlogPostController {
 		return new ResponseEntity<BlogPost>(blogPost,HttpStatus.OK);
 	}
 
+	@RequestMapping(value="/approve",method=RequestMethod.PUT)
+	public ResponseEntity<?> approve(@RequestBody BlogPost blog,HttpSession session) {
+		String email=(String)session.getAttribute("loginId");
+		if(email==null) {
+			ErrorClass error=new ErrorClass(5,"Unauthorized access..");
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+		}
+		User user=userDAO.getUser(email);
+		if(!user.getRole().equals("ADMIN")) {
+			ErrorClass error=new ErrorClass(7,"Access denied");
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+		}
+		blogPostDAO.approve(blog);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/reject/{rejectionReason}",method=RequestMethod.PUT)
+	public ResponseEntity<?> reject(@RequestBody BlogPost blog,@PathVariable String rejectionReason,HttpSession session) {
+		String email=(String)session.getAttribute("loginId");
+		if(email==null) {
+			ErrorClass error=new ErrorClass(5,"Unauthorized access..");
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+		}
+		User user=userDAO.getUser(email);
+		if(!user.getRole().equals("ADMIN")) {
+			ErrorClass error=new ErrorClass(7,"Access denied");
+			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+		}
+		blogPostDAO.reject(blog,rejectionReason);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 }
