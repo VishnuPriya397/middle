@@ -19,7 +19,7 @@ import com.Niit.model.Notification;
 @Controller
 public class NotificationController {
 
-		@Autowired
+	@Autowired
 	private NotificationDAO notificationDAO;
 	
 	public NotificationController(){

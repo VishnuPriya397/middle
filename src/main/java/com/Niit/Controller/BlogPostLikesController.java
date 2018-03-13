@@ -25,7 +25,7 @@ public class BlogPostLikesController {
 		System.out.println("BlogPostLikesController");
 	}
 	
-	@RequestMapping(value="/isliked/{blogId}",method=RequestMethod.GET)
+	@RequestMapping(value="/hasuserlikedblog/{blogId}",method=RequestMethod.GET)
 	public ResponseEntity<?> hasUserLikedBlog(@PathVariable int blogId,HttpSession session)
 	{
 		String email=(String)session.getAttribute("loginId");
