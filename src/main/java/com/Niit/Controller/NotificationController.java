@@ -35,9 +35,9 @@ public class NotificationController {
 			
 		}
 		List<Notification> notificationsNotViewed=notificationDAO.getNotificationNotViewed(email);
-		return new ResponseEntity<List<Notification>>(notificationsNotViewed,HttpStatus.OK);
-		
+		return new ResponseEntity<List<Notification>>(notificationsNotViewed,HttpStatus.OK);		
 	}
+	
 	@RequestMapping(value="/getnotification/{id}",method=RequestMethod.GET)
 	public ResponseEntity<?> getNotification(@PathVariable int id,HttpSession session) {
 		String email=(String)session.getAttribute("loginId");
@@ -49,6 +49,7 @@ public class NotificationController {
 		Notification notification=notificationDAO.getNotification(id);
 		return new ResponseEntity<Notification>(notification,HttpStatus.OK);
 	}
+	
 	@RequestMapping(value="/updatenotification/{id}",method=RequestMethod.PUT)
 	public ResponseEntity<?> updateNotification(@PathVariable int id,HttpSession session) {
 		String email=(String)session.getAttribute("loginId");
@@ -59,5 +60,4 @@ public class NotificationController {
 		notificationDAO.updateNotification(id);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
-
 }
