@@ -27,7 +27,7 @@ public class SockController {
 	private static final Log logger = LogFactory.getLog(SockController.class);
 
 	private final SimpMessagingTemplate messagingTemplate;
-	private List<String> users = new ArrayList<String>();
+	private List<String> user = new ArrayList<String>();
 
 	@Autowired
 	public SockController(SimpMessagingTemplate messagingTemplate) {
@@ -36,18 +36,18 @@ public class SockController {
 
 	}
 
-	@SubscribeMapping("/join/{username}")
-	public List<String> join(@DestinationVariable("username") String email) {
+	@SubscribeMapping("/join/{email}")
+	public List<String> join(@DestinationVariable("email") String email) {
 
-		System.out.println("username in sockcontroller" + email);
+		System.out.println("Email in sockcontroller" + email);
 
-		if (!users.contains(email)) {
-			users.add(email);
+		if (!user.contains(email)) {
+			user.add(email);
 		}
 		System.out.println("====JOIN==== " + email);
 		// notify all subscribers of new user
 		messagingTemplate.convertAndSend("/topic/join", email);
-		return users;
+		return user;
 	}
 
 	@MessageMapping(value = "/chat")
