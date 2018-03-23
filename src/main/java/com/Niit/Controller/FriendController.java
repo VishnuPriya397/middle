@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +17,7 @@ import com.Niit.Dao.FriendDAO;
 import com.Niit.Dao.UserDAO;
 import com.Niit.model.ErrorClass;
 import com.Niit.model.Friend;
+import com.Niit.model.Job;
 import com.Niit.model.User;
 
 @Controller
@@ -109,6 +111,17 @@ public class FriendController {
 		}
 		List<Friend> friends = friendDAO.listOfFriends(email);
 		return new ResponseEntity<List<Friend>>(friends, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/getfriend/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> getFriend(@PathVariable int id, HttpSession session) {
+		String email = (String) session.getAttribute("loginId");
+		if (email == null) {
+			ErrorClass error = new ErrorClass(4, "Unauthorized access..");
+			return new ResponseEntity<ErrorClass>(error, HttpStatus.UNAUTHORIZED);
+		}
+		Friend friend = friendDAO.getFriend(id);
+		return new ResponseEntity<Friend>(friend, HttpStatus.OK);
 	}
 
 }

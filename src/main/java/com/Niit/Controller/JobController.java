@@ -22,62 +22,60 @@ import com.Niit.model.User;
 
 @Controller
 public class JobController {
-	
+
 	@Autowired
 	private UserDAO userDAO;
-	
+
 	@Autowired
 	private JobDAO jobDAO;
-	
-	public JobController(){
+
+	public JobController() {
 		System.out.println("JobController");
 	}
-	
-	@RequestMapping(value="/addjob",method=RequestMethod.POST)
-	public ResponseEntity<?> addJob(@RequestBody Job job,HttpSession session)
-	{
-		String email=(String)session.getAttribute("loginId");
-		if(email==null) {
-			ErrorClass error=new ErrorClass(4,"Unauthorized access..");
-		return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+
+	@RequestMapping(value = "/addjob", method = RequestMethod.POST)
+	public ResponseEntity<?> addJob(@RequestBody Job job, HttpSession session) {
+		String email = (String) session.getAttribute("loginId");
+		if (email == null) {
+			ErrorClass error = new ErrorClass(4, "Unauthorized access..");
+			return new ResponseEntity<ErrorClass>(error, HttpStatus.UNAUTHORIZED);
 		}
-		
-		User user=userDAO.getUser(email);
-		if(!user.getRole().equals("ADMIN"))
-		{
-			ErrorClass error=new ErrorClass(5,"Access Denied");
-			return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+
+		User user = userDAO.getUser(email);
+		if (!user.getRole().equals("ADMIN")) {
+			ErrorClass error = new ErrorClass(5, "Access Denied");
+			return new ResponseEntity<ErrorClass>(error, HttpStatus.UNAUTHORIZED);
 		}
 		try {
 			job.setPostedOn(new Date());
 			jobDAO.addJob(job);
-			return new ResponseEntity<Job>(job,HttpStatus.OK);
-			}catch(Exception e) {
-				ErrorClass error=new ErrorClass(6,"Unable to post job details.."+e.getMessage());
-				return new ResponseEntity<ErrorClass>(error,HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		
-	}
-	@RequestMapping(value="/alljobs",method=RequestMethod.GET)
-	public ResponseEntity<?> getAllJobs(HttpSession session)
-	{
-		String email=(String)session.getAttribute("loginId");
-		if(email==null) {
-			ErrorClass error=new ErrorClass(4,"Unauthorized access..");
-		return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<Job>(job, HttpStatus.OK);
+		} catch (Exception e) {
+			ErrorClass error = new ErrorClass(6, "Unable to post job details.." + e.getMessage());
+			return new ResponseEntity<ErrorClass>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		List<Job>jobs=jobDAO.getAllJobs();
-		return new ResponseEntity<List<Job>>(jobs,HttpStatus.OK);
+
 	}
-	@RequestMapping(value="/getjob/{id}",method=RequestMethod.GET)
-	public ResponseEntity<?> getJob(@PathVariable int id,HttpSession session)
-	{
-		String email=(String)session.getAttribute("loginId");
-		if(email==null) {
-			ErrorClass error=new ErrorClass(4,"Unauthorized access..");
-		return new ResponseEntity<ErrorClass>(error,HttpStatus.UNAUTHORIZED);
+
+	@RequestMapping(value = "/alljobs", method = RequestMethod.GET)
+	public ResponseEntity<?> getAllJobs(HttpSession session) {
+		String email = (String) session.getAttribute("loginId");
+		if (email == null) {
+			ErrorClass error = new ErrorClass(4, "Unauthorized access..");
+			return new ResponseEntity<ErrorClass>(error, HttpStatus.UNAUTHORIZED);
 		}
-		Job job=jobDAO.getJob(id);
-		return new ResponseEntity<Job>(job,HttpStatus.OK);
-    }
+		List<Job> jobs = jobDAO.getAllJobs();
+		return new ResponseEntity<List<Job>>(jobs, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/getjob/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> getJob(@PathVariable int id, HttpSession session) {
+		String email = (String) session.getAttribute("loginId");
+		if (email == null) {
+			ErrorClass error = new ErrorClass(4, "Unauthorized access..");
+			return new ResponseEntity<ErrorClass>(error, HttpStatus.UNAUTHORIZED);
+		}
+		Job job = jobDAO.getJob(id);
+		return new ResponseEntity<Job>(job, HttpStatus.OK);
+	}
 }

@@ -27,7 +27,8 @@ public class SockController {
 	private static final Log logger = LogFactory.getLog(SockController.class);
 
 	private final SimpMessagingTemplate messagingTemplate;
-	private List<String> user = new ArrayList<String>();
+
+	private List<String> users = new ArrayList<String>();
 
 	@Autowired
 	public SockController(SimpMessagingTemplate messagingTemplate) {
@@ -36,23 +37,22 @@ public class SockController {
 
 	}
 
-	@SubscribeMapping("/join/{email}")
-	public List<String> join(@DestinationVariable("email") String email) {
+	@SubscribeMapping("/join/{username}")
+	public List<String> join(@DestinationVariable String username) {
 
-		System.out.println("Email in sockcontroller" + email);
+		System.out.println("Newly joined:" + username);
 
-		if (!user.contains(email)) {
-			user.add(email);
+		if (!users.contains(username)) {
+			users.add(username);
 		}
-		System.out.println("====JOIN==== " + email);
 		// notify all subscribers of new user
-		messagingTemplate.convertAndSend("/topic/join", email);
-		return user;
+		messagingTemplate.convertAndSend("/topic/join", username);
+		return users;
 	}
 
 	@MessageMapping(value = "/chat")
 	public void chatReveived(Chat chat) {
-		if ("all".equals(chat.getTo())) {
+		if (chat.getTo().equals("all")) {
 			System.out.println("IN CHAT REVEIVED " + chat.getMessage() + " " + chat.getFrom() + " to " + chat.getTo());
 			messagingTemplate.convertAndSend("/queue/chats", chat);
 
